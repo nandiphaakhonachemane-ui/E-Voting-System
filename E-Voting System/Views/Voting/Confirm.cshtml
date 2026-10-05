@@ -1,0 +1,40 @@
+﻿@model E_Voting_System.ViewModels.ConfirmVoteViewModel
+
+@{
+    ViewData["Title"] = "Confirm Your Vote";
+}
+
+<div class="container mt-5">
+    <div class="alert alert-warning">
+        <h4>Please confirm your selection</h4>
+        <p>Once submitted, your vote <strong>cannot be changed</strong>.</p>
+    </div>
+
+    <div class="card mb-3">
+        <div class="card-header">National Ballot</div>
+        <div class="card-body">
+            <h5>@Model.NationalParty.Name (@Model.NationalParty.PartyCode)</h5>
+        </div>
+    </div>
+
+    @if (Model.ProvincialParty != null)
+    {
+        <div class="card mb-3">
+            <div class="card-header">Provincial Ballot</div>
+            <div class="card-body">
+                <h5>@Model.ProvincialParty.Name (@Model.ProvincialParty.PartyCode)</h5>
+            </div>
+        </div>
+    }
+
+    <form asp-action="Submit" method="post">
+        @Html.AntiForgeryToken()
+        <input type="hidden" asp-for="Token" />
+        <input type="hidden" asp-for="ElectionId" />
+        <input type="hidden" asp-for="SelectedNationalPartyId" />
+        <input type="hidden" asp-for="SelectedProvincialPartyId" />
+
+        <button type="submit" class="btn btn-danger btn-lg me-3">Confirm & Submit Final Vote</button>
+        <a asp-action="Index" class="btn btn-outline-secondary btn-lg">Go Back & Change</a>
+    </form>
+</div>

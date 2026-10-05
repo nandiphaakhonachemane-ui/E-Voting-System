@@ -1,0 +1,67 @@
+﻿@model E_Voting_System.ViewModels.BallotViewModel
+
+@{
+    ViewData["Title"] = "Cast Your Vote";
+}
+
+<div class="container mt-4">
+    <h2>@Model.Election.Name</h2>
+    <p class="lead">Please select your preferred party for the National Ballot (and optionally Provincial).</p>
+
+    <form asp-action="Confirm" method="post">
+        @Html.AntiForgeryToken()
+        <input type="hidden" asp-for="Token" />
+        <input type="hidden" asp-for="ElectionId" />
+
+        <div class="card mb-4">
+            <div class="card-header bg-primary text-white">
+                <strong>National Ballot</strong>
+            </div>
+            <div class="card-body">
+                @foreach (var party in Model.Parties)
+                {
+                    <div class="form-check mb-3">
+                        <input class="form-check-input" type="radio"
+                               name="SelectedNationalPartyId"
+                               value="@party.Id"
+                               id="nat_@party.Id" required />
+                        <label class="form-check-label" for="nat_@party.Id">
+                            @if (!string.IsNullOrEmpty(party.LogoUrl))
+                            {
+                                <img src="@party.LogoUrl" alt="@party.Name" style="height:40px; margin-right:10px;" />
+                            }
+                            <strong>@party.Name</strong> (@party.PartyCode)
+                        </label>
+                    </div>
+                }
+            </div>
+        </div>
+
+        <div class="card mb-4">
+            <div class="card-header bg-secondary text-white">
+                <strong>Provincial Ballot (Optional)</strong>
+            </div>
+            <div class="card-body">
+                <div class="form-check mb-3">
+                    <input class="form-check-input" type="radio"
+                           name="SelectedProvincialPartyId" value="" id="prov_none" checked />
+                    <label class="form-check-label" for="prov_none">No selection / Same as national</label>
+                </div>
+                @foreach (var party in Model.Parties)
+                {
+                    <div class="form-check mb-3">
+                        <input class="form-check-input" type="radio"
+                               name="SelectedProvincialPartyId"
+                               value="@party.Id"
+                               id="prov_@party.Id" />
+                        <label class="form-check-label" for="prov_@party.Id">
+                            <strong>@party.Name</strong> (@party.PartyCode)
+                        </label>
+                    </div>
+                }
+            </div>
+        </div>
+
+        <button type="submit" class="btn btn-success btn-lg">Review & Confirm Vote</button>
+    </form>
+</div>

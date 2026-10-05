@@ -1,0 +1,34 @@
+﻿@model E_Voting_System.ViewModels.ElectionResultsViewModel
+
+<h2>Results – @Model.Election.Name</h2>
+
+<h4>National Ballot</h4>
+<table class="table table-striped">
+    <thead>
+        <tr>
+            <th>Party</th>
+            <th>Votes</th>
+            <th>Percentage</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var r in Model.NationalResults)
+        {
+            <tr>
+                <td>@r.PartyName (@r.PartyCode)</td>
+                <td>@r.Votes.ToString("N0")</td>
+                <td>
+                    @(Model.TotalNationalVotes > 0
+                        ? ((double)r.Votes / Model.TotalNationalVotes * 100).ToString("0.00")
+                        : "0")%
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>
+
+<p><strong>Total National Votes:</strong> @Model.TotalNationalVotes.ToString("N0")</p>
+
+<a asp-action="SeatAllocation" asp-route-id="@Model.Election.Id" class="btn btn-primary">
+    Calculate Seat Allocation (Droop Quota)
+</a>
