@@ -1,0 +1,137 @@
+﻿@model E_Voting_System.ViewModels.ElectionResultsViewModel
+@{
+    ViewData["Title"] = "Results - " + Model.Election.Name;
+}
+
+<div class="container mt-4">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <div>
+            <h1 class="mb-1">@Model.Election.Name</h1>
+            <p class="text-muted mb-0">
+                @Model.Election.StartDate.ToString("dd MMM yyyy") – @Model.Election.EndDate.ToString("dd MMM yyyy")
+            </p>
+        </div>
+        <a asp-action="Index" class="btn btn-outline-secondary">← Back to Results</a>
+    </div>
+
+    <!-- Summary Cards -->
+    <div class="row mb-4">
+        <div class="col-md-4">
+            <div class="card text-center border-primary">
+                <div class="card-body">
+                    <h3 class="text-primary">@Model.TotalNationalVotes.ToString("N0")</h3>
+                    <p class="mb-0">Total National Votes</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="card text-center border-success">
+                <div class="card-body">
+                    <h3 class="text-success">@Model.NationalResults.Count</h3>
+                    <p class="mb-0">Parties Contesting</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="card text-center border-info">
+                <div class="card-body">
+                    <h3 class="text-info">
+                        @(Model.NationalResults.Any() ? Model.NationalResults.First().PartyCode : "-")
+                    </h3>
+                    <p class="mb-0">Leading Party</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- National Results Table -->
+    <div class="card shadow-sm mb-5">
+        <div class="card-header bg-primary text-white">
+            <h5 class="mb-0">National Results</h5>
+        </div>
+        <div class="card-body p-0">
+            <div class="table-responsive">
+                <table class="table table-hover mb-0">
+                    <thead class="table-light">
+                        <tr>
+                            <th>#</th>
+                            <th>Party</th>
+                            <th>Code</th>
+                            <th class="text-end">Votes</th>
+                            <th class="text-end">Percentage</th>
+                            <th style="width: 30%;">Share</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @{
+                            int rank = 1;
+                            double maxPercentage = Model.TotalNationalVotes > 0 
+                                ? (double)Model.NationalResults.Max(r => r.Votes) / Model.TotalNationalVotes * 100 
+                                : 0;
+                        }
+                        @foreach (var result in Model.NationalResults)
+                        {
+                            double percentage = Model.TotalNationalVotes > 0
+                                ? (double)result.Votes / Model.TotalNationalVotes * 100
+                                : 0;
+
+                            <tr>
+                                <td>@rank</td>
+                                <td><strong>@result.PartyName</strong></td>
+                                <td><span class="badge bg-secondary">@result.PartyCode</span></td>
+                                <td class="text-end">@result.Votes.ToString("N0")</td>
+                                <td class="text-end">@percentage.ToString("0.00")%</td>
+                                <td>
+                                    <div class="progress" style="height: 20px;">
+                                        <div class="progress-bar bg-primary" role="progressbar"
+                                             style="width: @(maxPercentage > 0 ? (percentage / maxPercentage * 100) : 0)%"
+                                             aria-valuenow="@percentage" aria-valuemin="0" aria-valuemax="100">
+                                        </div>
+                                    </div>
+                                </td>
+                            </tr>
+                            rank++;
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    @if (Model.ProvincialResults.Any())
+    {
+        <div class="card shadow-sm">
+            <div class="card-header bg-success text-white">
+                <h5 class="mb-0">Provincial Results</h5>
+            </div>
+            <div class="card-body p-0">
+                <div class="table-responsive">
+                    <table class="table table-hover mb-0">
+                        <thead class="table-light">
+                            <tr>
+                                <th>Party</th>
+                                <th>Code</th>
+                                <th class="text-end">Votes</th>
+                                <th class="text-end">Percentage</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (var result in Model.ProvincialResults)
+                            {
+                                double percentage = Model.TotalProvincialVotes > 0
+                                    ? (double)result.Votes / Model.TotalProvincialVotes * 100
+                                    : 0;
+                                <tr>
+                                    <td>@result.PartyName</td>
+                                    <td><span class="badge bg-secondary">@result.PartyCode</span></td>
+                                    <td class="text-end">@result.Votes.ToString("N0")</td>
+                                    <td class="text-end">@percentage.ToString("0.00")%</td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    }
+</div>

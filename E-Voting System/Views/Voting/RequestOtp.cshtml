@@ -2,34 +2,57 @@
     ViewData["Title"] = "Verify OTP";
 }
 
-<div class="container mt-5" style="max-width: 450px;">
-    <div class="card shadow">
-        <div class="card-body">
-            <h3 class="text-center mb-4">Two-Factor Verification</h3>
-            <p class="text-muted text-center">
-                We have sent a 6-digit code to your email.<br />
-                Please enter it below to continue voting.
-            </p>
+<div class="container mt-5">
+    <div class="row justify-content-center">
+        <div class="col-md-6">
+            <div class="card shadow">
+                <div class="card-body p-4">
+                    <h3 class="card-title text-center mb-3">Two-Factor Authentication</h3>
 
-            <form asp-action="VerifyOtp" method="post">
-                @Html.AntiForgeryToken()
+                    @if (ViewBag.EmailError != null)
+                    {
+                        <div class="alert alert-danger">Email failed: @ViewBag.EmailError</div>
+                    }
+                    else if (ViewBag.SentTo != null)
+                    {
+                        <div class="alert alert-info">OTP sent to @ViewBag.SentTo. Check inbox and spam.</div>
+                    }
+                    else
+                    {
+                        <p class="text-center text-muted">
+                            We have sent a One-Time Password (OTP) to your registered email address.
+                            Please enter it below to continue to the ballot.
+                        </p>
+                    }
 
-                <div class="mb-3">
-                    <label class="form-label">OTP Code</label>
-                    <input type="text" name="code" class="form-control form-control-lg text-center"
-                           maxlength="6" placeholder="••••••" required
-                           style="letter-spacing: 8px; font-size: 1.5rem;" />
+                    <form asp-action="VerifyOtp" method="post">
+                        @Html.AntiForgeryToken()
+
+                        <div class="mb-3">
+                            <label class="form-label">Enter OTP Code</label>
+                            <input type="text" name="code" class="form-control form-control-lg text-center"
+                                   placeholder="Enter 6-digit code" maxlength="6" required
+                                   autocomplete="one-time-code" />
+                        </div>
+
+                        @if (!ViewData.ModelState.IsValid)
+                        {
+                            <div class="alert alert-danger">
+                                @Html.ValidationSummary(false)
+                            </div>
+                        }
+
+                        <div class="d-grid gap-2">
+                            <button type="submit" class="btn btn-primary btn-lg">
+                                Verify OTP & Continue
+                            </button>
+                        </div>
+                    </form>
+
+                    <div class="text-center mt-3">
+                        <a class="btn btn-link" asp-action="RequestOtp">Resend OTP</a>
+                    </div>
                 </div>
-
-                <div asp-validation-summary="All" class="text-danger mb-3"></div>
-
-                <button type="submit" class="btn btn-primary w-100 btn-lg">
-                    Verify & Continue to Ballot
-                </button>
-            </form>
-
-            <div class="text-center mt-3">
-                <a asp-action="RequestOtp">Resend Code</a>
             </div>
         </div>
     </div>

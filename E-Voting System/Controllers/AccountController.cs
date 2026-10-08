@@ -1,8 +1,10 @@
 ﻿using E_Voting_System.Models;
 using E_Voting_System.Services;
 using E_Voting_System.ViewModels;
+using Microsoft.AspNetCore.Authorization;          // ← add this
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 
 namespace E_Voting_System.Controllers
 {
@@ -50,6 +52,15 @@ namespace E_Voting_System.Controllers
             if (existingUser != null)
             {
                 ModelState.AddModelError("Email", "This email is already registered.");
+                return View(model);
+            }
+
+            var idAlreadyUsed = await _userManager.Users
+                .AnyAsync(u => u.SouthAfricanId == model.SouthAfricanId);
+
+            if (idAlreadyUsed)
+            {
+                ModelState.AddModelError("SouthAfricanId", "This South African ID is already registered.");
                 return View(model);
             }
 
@@ -118,6 +129,71 @@ namespace E_Voting_System.Controllers
         {
             await _signInManager.SignOutAsync();
             return RedirectToAction("Index", "Home");
+        }
+
+        // ===================== CHANGE EMAIL =====================
+        [HttpGet]
+        [Authorize]
+        public IActionResult ChangeEmail()
+        {
+            return View();
+        }
+
+        [HttpPost]
+        [Authorize]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> ChangeEmail(string newEmail, string currentPassword)
+        {
+            var user = await _userManager.GetUserAsync(User);
+            if (user == null)
+                return Challenge();
+
+            if (string.IsNullOrWhiteSpace(newEmail) || string.IsNullOrWhiteSpace(currentPassword))
+            {
+                ModelState.AddModelError(string.Empty, "Enter the new email and your current password.");
+                return View();
+            }
+
+            var passwordOk = await _userManager.CheckPasswordAsync(user, currentPassword);
+            if (!passwordOk)
+            {
+                ModelState.AddModelError(string.Empty, "Current password is incorrect.");
+                return View();
+            }
+
+            var existing = await _userManager.FindByEmailAsync(newEmail);
+            if (existing != null && existing.Id != user.Id)
+            {
+                ModelState.AddModelError(string.Empty, "That email is already registered.");
+                return View();
+            }
+
+            var emailResult = await _userManager.SetEmailAsync(user, newEmail);
+            if (!emailResult.Succeeded)
+            {
+                foreach (var error in emailResult.Errors)
+                    ModelState.AddModelError(string.Empty, error.Description);
+                return View();
+            }
+
+            var nameResult = await _userManager.SetUserNameAsync(user, newEmail);
+            if (!nameResult.Succeeded)
+            {
+                foreach (var error in nameResult.Errors)
+                    ModelState.AddModelError(string.Empty, error.Description);
+                return View();
+            }
+
+            await _signInManager.RefreshSignInAsync(user);
+            TempData["Success"] = "Email updated successfully. Please log in with the new email next time.";
+            return RedirectToAction("Index", "Home");
+        }
+        // ========================================================
+
+        [HttpGet]
+        public IActionResult AccessDenied()
+        {
+            return View();
         }
 
         private IActionResult RedirectToLocal(string? returnUrl)

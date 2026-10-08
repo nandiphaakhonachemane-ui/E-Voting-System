@@ -1,8 +1,57 @@
 ﻿@{
-    ViewData["Title"] = "Home Page";
+    ViewData["Title"] = "Home";
 }
 
-<div class="text-center">
-    <h1 class="display-4">Welcome</h1>
-    <p>Learn about <a href="https://learn.microsoft.com/aspnet/core">building Web apps with ASP.NET Core</a>.</p>
+<div class="text-center py-5 mb-4" style="background: linear-gradient(135deg, #0d6efd 0%, #0a58ca 100%); color: white; border-radius: 12px;">
+    <h1 class="display-4 fw-bold">E-Voting System</h1>
+    <p class="lead mb-4">Cast your vote securely. One person, one vote.</p>
+    <a class="btn btn-light btn-lg me-2" asp-controller="Voting" asp-action="Index">Vote Now</a>
+    <a class="btn btn-outline-light btn-lg" asp-controller="PublicResults" asp-action="Index">View Results</a>
+</div>
+
+<div class="row text-center mb-5">
+    <div class="col-md-4 mb-3">
+        <div class="card h-100 shadow-sm">
+            <div class="card-body">
+                <h5 class="card-title">1. Sign in</h5>
+                <p class="card-text text-muted">Log in with your account. A one-time code is sent to your email.</p>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-4 mb-3">
+        <div class="card h-100 shadow-sm">
+            <div class="card-body">
+                <h5 class="card-title">2. Choose a candidate</h5>
+                <p class="card-text text-muted">Open the active election and select one candidate.</p>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-4 mb-3">
+        <div class="card h-100 shadow-sm">
+            <div class="card-body">
+                <h5 class="card-title">3. Confirm</h5>
+                <p class="card-text text-muted">Submit your vote. You can only vote once, and you will get a confirmation email.</p>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-md-6 mb-3">
+        <div class="p-4 border rounded h-100">
+            <h4>Secure voting</h4>
+            <ul class="mb-0">
+                <li>Login required</li>
+                <li>Email verification</li>
+                <li>One vote per person</li>
+            </ul>
+        </div>
+    </div>
+    <div class="col-md-6 mb-3">
+        <div class="p-4 border rounded h-100">
+            <h4>Public results</h4>
+            <p class="mb-3">After voting closes, anyone can view the results.</p>
+            <a class="btn btn-primary" asp-controller="PublicResults" asp-action="Index">See results</a>
+        </div>
+    </div>
 </div>

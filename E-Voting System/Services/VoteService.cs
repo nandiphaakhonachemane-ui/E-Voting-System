@@ -17,30 +17,17 @@ namespace E_Voting_System.Services
             _logger = logger;
         }
 
-        public async Task<bool> IsElectionOpenAsync(int electionId)
-        {
-            var election = await _context.Elections.FindAsync(electionId);
-            if (election == null) return false;
-
-            var now = DateTime.UtcNow;
-            return election.IsOpen && now >= election.StartDate && now <= election.EndDate;
-        }
-
         public async Task<bool> HasAlreadyVotedAsync(string userId, int electionId)
         {
             return await _context.VotingTokens
-                .AnyAsync(t => t.UserId == userId
-                            && t.ElectionId == electionId
-                            && t.IsUsed);
+                .AnyAsync(t => t.UserId == userId && t.ElectionId == electionId && t.IsUsed);
         }
 
         public async Task<VotingToken?> IssueTokenAsync(string userId, int electionId)
         {
-            // Prevent issuing if already voted
             if (await HasAlreadyVotedAsync(userId, electionId))
                 return null;
 
-            // Check if a valid unused token already exists
             var existing = await _context.VotingTokens
                 .FirstOrDefaultAsync(t => t.UserId == userId
                                        && t.ElectionId == electionId
@@ -49,19 +36,20 @@ namespace E_Voting_System.Services
             if (existing != null)
                 return existing;
 
-            // Create new one-time token
             var token = new VotingToken
             {
                 UserId = userId,
                 ElectionId = electionId,
                 Token = GenerateSecureToken(),
-                IssuedAt = DateTime.UtcNow,
-                IsUsed = false
+                IsUsed = false,
+                CreatedAt = DateTime.UtcNow
             };
+
+            // Only set these if your VotingToken model has the properties
+            // token.CreatedAt = DateTime.UtcNow;
 
             _context.VotingTokens.Add(token);
             await _context.SaveChangesAsync();
-
             return token;
         }
 
@@ -70,41 +58,18 @@ namespace E_Voting_System.Services
             string tokenValue,
             int electionId,
             int nationalPartyId,
-            int? provincialPartyId = null)
+            int? provincialPartyId)
         {
-            // 1. Election must be open
-            if (!await IsElectionOpenAsync(electionId))
-                return (false, "Election is closed or not yet open.");
-
-            // 2. Find the token
             var token = await _context.VotingTokens
                 .FirstOrDefaultAsync(t => t.Token == tokenValue
                                        && t.UserId == userId
-                                       && t.ElectionId == electionId);
+                                       && t.ElectionId == electionId
+                                       && !t.IsUsed);
 
             if (token == null)
-                return (false, "Invalid voting token.");
+                return (false, "Invalid or already used voting token.");
 
-            if (token.IsUsed)
-                return (false, "This token has already been used.");
-
-            // 3. Double-check user hasn't voted (race-condition protection)
-            if (await HasAlreadyVotedAsync(userId, electionId))
-                return (false, "You have already cast your vote.");
-
-            // 4. Validate parties exist
-            var nationalParty = await _context.Parties.FindAsync(nationalPartyId);
-            if (nationalParty == null || !nationalParty.IsActive)
-                return (false, "Invalid national party selection.");
-
-            if (provincialPartyId.HasValue)
-            {
-                var provincialParty = await _context.Parties.FindAsync(provincialPartyId.Value);
-                if (provincialParty == null || !provincialParty.IsActive)
-                    return (false, "Invalid provincial party selection.");
-            }
-
-            // 5. Create anonymised vote (NO UserId stored here)
+            // Create anonymized vote
             var vote = new Vote
             {
                 ElectionId = electionId,
@@ -114,11 +79,11 @@ namespace E_Voting_System.Services
                 CastAt = DateTime.UtcNow
             };
 
-            // 6. Mark token as used
             token.IsUsed = true;
             token.UsedAt = DateTime.UtcNow;
 
-            // 7. Write audit log (only that the user voted – never what they voted)
+            _context.Votes.Add(vote);
+
             _context.AuditLogs.Add(new AuditLog
             {
                 UserId = userId,
@@ -127,12 +92,11 @@ namespace E_Voting_System.Services
                 Details = $"ElectionId={electionId}"
             });
 
-            _context.Votes.Add(vote);
             await _context.SaveChangesAsync();
 
-            _logger.LogInformation("Vote successfully cast for user {UserId} in election {ElectionId}", userId, electionId);
+            _logger.LogInformation("Vote cast successfully for user {UserId}", userId);
 
-            return (true, "Your vote has been successfully recorded. Thank you for voting.");
+            return (true, "Your vote has been successfully recorded. Thank you for voting!");
         }
 
         private static string GenerateSecureToken()

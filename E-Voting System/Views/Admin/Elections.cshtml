@@ -1,0 +1,53 @@
+﻿@model List<E_Voting_System.Models.Election>
+
+@{
+    ViewData["Title"] = "Manage Elections";
+}
+
+<div class="container mt-4">
+    <div class="d-flex justify-content-between align-items-center mb-3">
+        <h2>Elections</h2>
+        <div>
+            <a asp-action="CreateElection" class="btn btn-primary">Create Election</a>
+            <a asp-action="Index" class="btn btn-outline-secondary">Back to Admin</a>
+        </div>
+    </div>
+
+    @if (Model == null || !Model.Any())
+    {
+        <div class="alert alert-info">No elections have been created yet.</div>
+    }
+    else
+    {
+        <table class="table table-bordered table-striped">
+            <thead class="table-light">
+                <tr>
+                    <th>Name</th>
+                    <th>Start Date</th>
+                    <th>End Date</th>
+                    <th>Status</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var election in Model)
+                {
+                    <tr>
+                        <td>@election.Name</td>
+                        <td>@election.StartDate.ToString("yyyy-MM-dd HH:mm")</td>
+                        <td>@election.EndDate.ToString("yyyy-MM-dd HH:mm")</td>
+                        <td>
+                            @if (election.IsOpen)
+                            {
+                                <span class="badge bg-success">Open</span>
+                            }
+                            else
+                            {
+                                <span class="badge bg-secondary">Closed</span>
+                            }
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    }
+</div>

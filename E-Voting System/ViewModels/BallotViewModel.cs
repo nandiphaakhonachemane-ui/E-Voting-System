@@ -6,15 +6,17 @@ namespace E_Voting_System.ViewModels
 {
     public class BallotViewModel
     {
-        public Election Election { get; set; } = null!;
-        public List<Party> Parties { get; set; } = new();
+        public int ElectionId { get; set; }
+        public Election? Election { get; set; }
         public string Token { get; set; } = string.Empty;
 
-        public int ElectionId => Election.Id;
+        public List<Party> Parties { get; set; } = new();
 
-        [Required(ErrorMessage = "Please select a party for the National Ballot")]
+        [Required(ErrorMessage = "Please select a national party")]
+        [Display(Name = "National Party")]
         public int SelectedNationalPartyId { get; set; }
 
+        [Display(Name = "Provincial Party (Optional)")]
         public int? SelectedProvincialPartyId { get; set; }
     }
 }

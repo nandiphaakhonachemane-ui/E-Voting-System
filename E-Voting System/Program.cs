@@ -31,6 +31,7 @@ builder.Services.AddTransient<IEmailSender, EmailSender>();
 // Custom Services
 builder.Services.AddScoped<IVoteService, VoteService>();
 builder.Services.AddScoped<IOtpService, OtpService>();
+builder.Services.AddScoped<IResultsService, ResultsService>();
 
 // Session
 builder.Services.AddDistributedMemoryCache();
@@ -68,8 +69,6 @@ app.MapControllerRoute(
 app.MapRazorPages();
 
 // ====================== SEED DATA ======================
-
-// ====================== SEED DATA ======================
 using (var scope = app.Services.CreateScope())
 {
     var services = scope.ServiceProvider;
@@ -81,7 +80,7 @@ using (var scope = app.Services.CreateScope())
         var roleManager = services.GetRequiredService<RoleManager<IdentityRole>>();
         var userManager = services.GetRequiredService<UserManager<ApplicationUser>>();
 
-        // ----- Create Roles -----
+        // Create Roles
         string[] roles = { "Admin", "ElectionOfficer", "Voter" };
         foreach (var role in roles)
         {
@@ -91,7 +90,7 @@ using (var scope = app.Services.CreateScope())
             }
         }
 
-        // ----- Create Admin User -----
+        // Create Admin User
         string adminEmail = "admin@evoting.com";
         string adminPassword = "Admin@12345";
 
@@ -117,7 +116,7 @@ using (var scope = app.Services.CreateScope())
             }
         }
 
-        // ----- Seed Parties (only if none exist) -----
+        // Seed Parties
         if (!context.Parties.Any())
         {
             context.Parties.AddRange(
@@ -129,7 +128,7 @@ using (var scope = app.Services.CreateScope())
             await context.SaveChangesAsync();
         }
 
-        // ----- Seed one open Election -----
+        // Seed Election
         if (!context.Elections.Any())
         {
             context.Elections.Add(new Election
@@ -149,3 +148,4 @@ using (var scope = app.Services.CreateScope())
         logger.LogError(ex, "An error occurred while seeding the database.");
     }
 }
+app.Run();

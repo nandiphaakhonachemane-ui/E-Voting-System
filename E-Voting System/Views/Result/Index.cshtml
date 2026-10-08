@@ -1,0 +1,70 @@
+﻿@model List<E_Voting_System.Models.Election>
+@{
+    ViewData["Title"] = "Admin - Election Results";
+}
+
+<div class="mb-4">
+    <h1 class="fw-bold mb-1">Admin - Election Results</h1>
+    <p class="text-muted mb-0">Review election status and open published results.</p>
+</div>
+
+<div class="card shadow-sm border-0">
+    <div class="table-responsive">
+        <table class="table table-hover align-middle mb-0">
+            <thead class="table-light">
+                <tr>
+                    <th class="ps-3">Election Name</th>
+                    <th>Start Date</th>
+                    <th>End Date</th>
+                    <th>Status</th>
+                    <th>Results Published</th>
+                    <th class="pe-3">Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                @if (Model == null || !Model.Any())
+                {
+                    <tr>
+                        <td colspan="6" class="text-center text-muted py-4">No elections found.</td>
+                    </tr>
+                }
+                else
+                {
+                    @foreach (var election in Model)
+                    {
+                        <tr>
+                            <td class="ps-3 fw-semibold">@election.Name</td>
+                            <td>@election.StartDate.ToString("dd MMM yyyy")</td>
+                            <td>@election.EndDate.ToString("dd MMM yyyy")</td>
+                            <td>
+                                @if (election.IsOpen)
+                                {
+                                    <span class="badge bg-success">Open</span>
+                                }
+                                else
+                                {
+                                    <span class="badge bg-secondary">Closed</span>
+                                }
+                            </td>
+                            <td>
+                                @if (election.ResultsPublished)
+                                {
+                                    <span class="badge bg-primary">Published</span>
+                                }
+                                else
+                                {
+                                    <span class="badge bg-warning text-dark">Not Published</span>
+                                }
+                            </td>
+                            <td class="pe-3">
+                                <a asp-action="Details" asp-route-id="@election.Id" class="btn btn-sm btn-outline-primary">
+                                    View Results
+                                </a>
+                            </td>
+                        </tr>
+                    }
+                }
+            </tbody>
+        </table>
+    </div>
+</div>

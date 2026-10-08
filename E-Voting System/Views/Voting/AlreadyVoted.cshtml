@@ -1,0 +1,18 @@
+﻿@{
+    ViewData["Title"] = "Already Voted";
+}
+
+<div class="row justify-content-center mt-5">
+    <div class="col-md-6">
+        <div class="card shadow-sm border-0 text-center">
+            <div class="card-body p-5">
+                <div class="mb-3" style="font-size: 3rem; color: #dc3545;">!</div>
+                <h1 class="h3 fw-bold text-danger mb-2">You have already voted</h1>
+                <p class="text-muted mb-4">You can only vote once in this election. Your vote has been recorded.</p>
+
+                <a class="btn btn-primary me-2" asp-controller="Home" asp-action="Index">Back to Home</a>
+                <a class="btn btn-outline-primary" asp-controller="PublicResults" asp-action="Index">View Results</a>
+            </div>
+        </div>
+    </div>
+</div>

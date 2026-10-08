@@ -1,0 +1,51 @@
+﻿@model List<E_Voting_System.Models.Party>
+
+@{
+    ViewData["Title"] = "Manage Parties";
+}
+
+<div class="container mt-4">
+    <div class="d-flex justify-content-between align-items-center mb-3">
+        <h2>Political Parties</h2>
+        <div>
+            <a asp-action="CreateParty" class="btn btn-primary">Add New Party</a>
+            <a asp-action="Index" class="btn btn-outline-secondary">Back to Admin</a>
+        </div>
+    </div>
+
+    @if (Model == null || !Model.Any())
+    {
+        <div class="alert alert-info">No parties have been added yet.</div>
+    }
+    else
+    {
+        <table class="table table-bordered table-striped">
+            <thead class="table-light">
+                <tr>
+                    <th>Name</th>
+                    <th>Party Code</th>
+                    <th>Status</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var party in Model)
+                {
+                    <tr>
+                        <td>@party.Name</td>
+                        <td>@party.PartyCode</td>
+                        <td>
+                            @if (party.IsActive)
+                            {
+                                <span class="badge bg-success">Active</span>
+                            }
+                            else
+                            {
+                                <span class="badge bg-secondary">Inactive</span>
+                            }
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    }
+</div>

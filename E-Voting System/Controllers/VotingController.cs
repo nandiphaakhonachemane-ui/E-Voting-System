@@ -37,6 +37,13 @@ namespace E_Voting_System.Controllers
                 return View("NotEligible");
             }
 
+            // ===== OTP CHECK =====
+            if (HttpContext.Session.GetString("OtpVerified") != "true")
+            {
+                return RedirectToAction(nameof(RequestOtp));
+            }
+            // ====================
+
             var openElection = await _context.Elections
                 .Where(e => e.IsOpen)
                 .OrderByDescending(e => e.StartDate)
@@ -67,6 +74,7 @@ namespace E_Voting_System.Controllers
 
             var vm = new BallotViewModel
             {
+                ElectionId = openElection.Id,
                 Election = openElection,
                 Parties = parties,
                 Token = token.Token
@@ -137,16 +145,24 @@ namespace E_Voting_System.Controllers
         }
 
         [HttpGet]
+        [HttpGet]
         public async Task<IActionResult> RequestOtp()
         {
             var user = await _userManager.GetUserAsync(User);
             if (user == null || !user.IsEligibleVoter)
                 return RedirectToAction("NotEligible");
 
-            // Generate and send OTP
-            await _otpService.GenerateAndSendOtpAsync(user.Id, user.Email!);
+            try
+            {
+                await _otpService.GenerateAndSendOtpAsync(user.Id, user.Email!);
+                ViewBag.SentTo = user.Email;
+            }
+            catch (Exception ex)
+            {
+                ViewBag.EmailError = ex.Message;
+            }
 
-            return View(); // Shows the form to enter OTP
+            return View();
         }
 
         [HttpPost]

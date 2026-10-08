@@ -1,0 +1,42 @@
+﻿@model E_Voting_System.Models.Party
+
+@{
+    ViewData["Title"] = "Add Party";
+}
+
+<div class="container mt-4">
+    <h2>Add New Party</h2>
+    <hr />
+
+    <div class="row">
+        <div class="col-md-6">
+            <form asp-action="CreateParty" method="post">
+                <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+
+                <div class="mb-3">
+                    <label asp-for="Name" class="form-label"></label>
+                    <input asp-for="Name" class="form-control" />
+                    <span asp-validation-for="Name" class="text-danger"></span>
+                </div>
+
+                <div class="mb-3">
+                    <label asp-for="PartyCode" class="form-label"></label>
+                    <input asp-for="PartyCode" class="form-control" />
+                    <span asp-validation-for="PartyCode" class="text-danger"></span>
+                </div>
+
+                <div class="form-check mb-3">
+                    <input asp-for="IsActive" class="form-check-input" />
+                    <label asp-for="IsActive" class="form-check-label">Active</label>
+                </div>
+
+                <button type="submit" class="btn btn-primary">Save Party</button>
+                <a asp-action="Parties" class="btn btn-secondary">Cancel</a>
+            </form>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}

@@ -1,0 +1,32 @@
+﻿@{
+    ViewData["Title"] = "Access Denied";
+}
+
+<div class="container mt-5">
+    <div class="row justify-content-center">
+        <div class="col-md-8 col-lg-6">
+            <div class="card shadow border-danger">
+                <div class="card-header bg-danger text-white text-center">
+                    <h3 class="mb-0">Access Denied</h3>
+                </div>
+                <div class="card-body text-center py-5">
+                    <div class="mb-4">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="64" height="64" fill="currentColor" class="bi bi-shield-lock text-danger" viewBox="0 0 16 16">
+                            <path d="M5.338 1.59a61.44 61.44 0 0 0-2.837.856.481.481 0 0 0-.328.39c-.554 4.157.726 7.19 2.253 9.188a10.725 10.725 0 0 0 2.287 2.233c.346.244.652.42.893.533.24.114.546.2.852.2s.612-.086.852-.2a10.705 10.705 0 0 0 .893-.533 10.717 10.717 0 0 0 2.287-2.233c1.527-1.997 2.807-5.031 2.253-9.188a.48.48 0 0 0-.328-.39c-.95-.325-1.92-.63-2.837-.856C9.552 1.29 8.74 1.155 8 1.155s-1.552.134-2.662.435zM5.072.56C6.157.266 7.31 0 8 0s1.843.266 2.928.56c1.11.3 2.229.655 2.887.87a1.54 1.54 0 0 1 1.044 1.262c.596 4.477-.787 7.795-2.465 9.99a11.775 11.775 0 0 1-2.517 2.453 7.159 7.159 0 0 1-1.064.633A5.018 5.018 0 0 1 8 14.5c-.495 0-.978-.085-1.413-.248a5.018 5.018 0 0 1-1.064-.633 11.777 11.777 0 0 1-2.517-2.453C1.928 10.487.545 7.169 1.141 2.692A1.54 1.54 0 0 1 2.185 1.43 62.456 62.456 0 0 1 5.072.56z"/>
+                            <path d="M9.5 6.5a1.5 1.5 0 0 1-1 1.415l.385 1.99a.5.5 0 0 1-.491.595h-.778a.5.5 0 0 1-.49-.595l.384-1.99a1.5 1.5 0 1 1 2-1.415z"/>
+                        </svg>
+                    </div>
+
+                    <h4 class="mb-3">You do not have permission to access this page.</h4>
+                    <p class="text-muted mb-4">
+                        Please contact the system administrator if you believe this is a mistake.
+                    </p>
+
+                    <a asp-controller="Home" asp-action="Index" class="btn btn-primary">
+                        ← Back to Home
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
