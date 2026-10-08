@@ -31,6 +31,11 @@ namespace E_Voting_System.ViewModels
         public string? Address { get; set; }
 
         public string? Ward { get; set; }
+
+        // ========== POPIA Consent ==========
+        [Required(ErrorMessage = "You must accept the privacy notice to register.")]
+        [Display(Name = "Accept Privacy Notice")]
+        public bool AcceptPrivacy { get; set; }
     }
 }
 

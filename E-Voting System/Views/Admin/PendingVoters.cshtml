@@ -1,4 +1,5 @@
 ﻿@model List<E_Voting_System.Models.ApplicationUser>
+@using E_Voting_System.Helpers
 
 @{
     ViewData["Title"] = "Pending Voter Approvals";
@@ -42,7 +43,7 @@
                         <tr>
                             <td>@user.FullName</td>
                             <td>@user.Email</td>
-                            <td>@user.SouthAfricanId</td>
+                            <td>@IdMasker.Mask(user.SouthAfricanId)</td>   <!-- Masked -->
                             <td>@user.RegisteredAt.ToString("yyyy-MM-dd HH:mm")</td>
                             <td>
                                 <form asp-action="ApproveVoter" method="post">

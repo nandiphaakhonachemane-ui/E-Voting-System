@@ -56,6 +56,17 @@
                         <input asp-for="Ward" class="form-control" placeholder="Ward" />
                     </div>
 
+                    <!-- ========== POPIA Privacy Notice ========== -->
+                    <div class="mb-3 form-check">
+                        <input asp-for="AcceptPrivacy" class="form-check-input" type="checkbox" />
+                        <label asp-for="AcceptPrivacy" class="form-check-label">
+                            I understand that my South African ID number, full name, email and other personal details
+                            will be processed in accordance with the <strong>Protection of Personal Information Act (POPIA)</strong>
+                            for the purpose of voter registration, verification and election administration by authorised officials only.
+                        </label>
+                        <span asp-validation-for="AcceptPrivacy" class="text-danger d-block"></span>
+                    </div>
+
                     <button type="submit" class="btn btn-primary w-100">Register</button>
 
                     <div class="mt-3 text-center">
